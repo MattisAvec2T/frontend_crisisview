@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API } from "../../config/api";
 
 type Incident = {
   id: number;
@@ -9,7 +10,6 @@ type Incident = {
   longitude: number;
 };
 
-const API = "http://localhost:3001/incidents";
 
 export default function IncidentAdmin() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -17,7 +17,7 @@ export default function IncidentAdmin() {
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const fetchIncidents = async () => {
-    const res = await fetch(API);
+    const res = await fetch(API.incidents);
     const data = await res.json();
     setIncidents(data);
   };
@@ -28,13 +28,13 @@ export default function IncidentAdmin() {
 
   const handleSubmit = async () => {
     if (editingId) {
-      await fetch(`${API}/${editingId}`, {
+      await fetch(`${API.incidents}/${editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
     } else {
-      await fetch(API, {
+      await fetch(API.incidents, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -47,7 +47,7 @@ export default function IncidentAdmin() {
   };
 
   const handleDelete = async (id: number) => {
-    await fetch(`${API}/${id}`, { method: "DELETE" });
+    await fetch(`${API.incidents}/${id}`, { method: "DELETE" });
     fetchIncidents();
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API } from "../config/api";
 import {
   MapContainer,
   TileLayer,
@@ -67,7 +68,7 @@ export default function Map({
   const [interventions, setInterventions] = useState<Intervention[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/interventions")
+    fetch(API.interventions)
       .then((res) => res.json())
       .then(setInterventions);
   }, []);

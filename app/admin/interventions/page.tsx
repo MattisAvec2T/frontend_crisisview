@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API } from "../../config/api";
 
 type Intervention = {
   id: number;
@@ -20,9 +21,6 @@ type Incident = {
   name: string;
 };
 
-const API_INT = "http://localhost:3001/interventions";
-const API_TECHNICIENS = "http://localhost:3001/techniciens";
-const API_INCIDENTS = "http://localhost:3001/incidents";
 
 export default function InterventionsAdmin() {
   const [interventions, setInterventions] = useState<Intervention[]>([]);
@@ -39,9 +37,9 @@ export default function InterventionsAdmin() {
   // ---------------- FETCH ----------------
   const fetchAll = async () => {
     const [r, u, p] = await Promise.all([
-      fetch(API_INT).then((res) => res.json()),
-      fetch(API_TECHNICIENS).then((res) => res.json()),
-      fetch(API_INCIDENTS).then((res) => res.json()),
+      fetch(API.interventions).then((res) => res.json()),
+      fetch(API.techniciens).then((res) => res.json()),
+      fetch(API.incidents).then((res) => res.json()),
     ]);
 
     setInterventions(r);
@@ -58,13 +56,13 @@ export default function InterventionsAdmin() {
     if (!form.id_incident || !form.id_technicien) return;
 
     if (editingId) {
-      await fetch(`${API_INT}/${editingId}`, {
+      await fetch(`${API.interventions}/${editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
     } else {
-      await fetch(API_INT, {
+      await fetch(API.interventions, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -78,7 +76,7 @@ export default function InterventionsAdmin() {
 
   // ---------------- DELETE ----------------
   const handleDelete = async (id: number) => {
-    await fetch(`${API_INT}/${id}`, { method: "DELETE" });
+    await fetch(`${API.interventions}/${id}`, { method: "DELETE" });
     fetchAll();
   };
 

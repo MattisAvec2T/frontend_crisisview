@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API } from "../../config/api";
 
 type Technicien = {
   id: number;
@@ -10,7 +11,6 @@ type Technicien = {
   phone: string;
 };
 
-const API = "http://localhost:3001/techniciens";
 
 export default function TechniciensAdmin() {
   const [techniciens, setTechniciens] = useState<Technicien[]>([]);
@@ -24,7 +24,7 @@ export default function TechniciensAdmin() {
 
   // ---------------- FETCH ----------------
   const fetchTechniciens = async () => {
-    const res = await fetch(API);
+    const res = await fetch(API.techniciens);
     const data = await res.json();
     setTechniciens(data);
   };
@@ -39,14 +39,14 @@ export default function TechniciensAdmin() {
 
     if (editingId) {
       // UPDATE
-      await fetch(`${API}/${editingId}`, {
+      await fetch(`${API.techniciens}/${editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
     } else {
       // CREATE
-      await fetch(API, {
+      await fetch(API.techniciens, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -60,7 +60,7 @@ export default function TechniciensAdmin() {
 
   // ---------------- DELETE ----------------
   const handleDelete = async (id: number) => {
-    await fetch(`${API}/${id}`, { method: "DELETE" });
+    await fetch(`${API.techniciens}/${id}`, { method: "DELETE" });
     fetchTechniciens();
   };
 
