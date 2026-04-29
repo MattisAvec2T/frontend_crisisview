@@ -2,10 +2,11 @@ pipeline {
     agent { label 'docker-agent' }
 
     parameters {
-        string(name: 'VM_IP',      defaultValue: '0.0.0.0', description: 'Adresse IP de la VM frontend')
-        string(name: 'VM_USER',    defaultValue: 'ubuntu',  description: 'Utilisateur SSH')
-        string(name: 'PORT',       defaultValue: '80',      description: 'Port sur lequel sera exposé le frontend')
-        string(name: 'IMAGE_TAG',  defaultValue: 'latest',  description: 'Tag de l\'image à déployer — "latest" correspond à la version la plus récente, indiquer un numéro de build pour rollback (ex. 7)')
+        string(name: 'VM_IP',      defaultValue: '0.0.0.0',              description: 'Adresse IP de la VM frontend')
+        string(name: 'VM_USER',    defaultValue: 'ubuntu',               description: 'Utilisateur SSH')
+        string(name: 'PORT',       defaultValue: '80',                   description: 'Port sur lequel sera exposé le frontend')
+        string(name: 'API_URL',    defaultValue: 'http://0.0.0.0:3001',  description: 'URL de l\'API backend (ex: http://192.168.1.10:3001)')
+        string(name: 'IMAGE_TAG',  defaultValue: 'latest',               description: 'Tag de l\'image à déployer — "latest" correspond à la version la plus récente, indiquer un numéro de build pour rollback (ex. 7)')
     }
 
     environment {
@@ -23,7 +24,7 @@ pipeline {
                     passwordVariable: 'DOCKERHUB_TOKEN'
                 )]) {
                     sshagent(['vm-ssh-key-front']) {
-                        sh "ssh -o StrictHostKeyChecking=no ${params.VM_USER}@${params.VM_IP} 'docker pull ${DOCKERHUB_USER}/${IMAGE_NAME}:${params.IMAGE_TAG}; docker rm -f ${CONTAINER_NAME} || true; docker run -d --name ${CONTAINER_NAME} -p ${params.PORT}:3000 ${DOCKERHUB_USER}/${IMAGE_NAME}:${params.IMAGE_TAG}'"
+                        sh "ssh -o StrictHostKeyChecking=no ${params.VM_USER}@${params.VM_IP} 'docker pull ${DOCKERHUB_USER}/${IMAGE_NAME}:${params.IMAGE_TAG}; docker rm -f ${CONTAINER_NAME} || true; docker run -d --name ${CONTAINER_NAME} -p ${params.PORT}:3000 -e API_URL=${params.API_URL} ${DOCKERHUB_USER}/${IMAGE_NAME}:${params.IMAGE_TAG}'"
                     }
                 }
             }

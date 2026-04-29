@@ -1,10 +1,6 @@
 pipeline {
     agent { label 'docker-agent' }
 
-    parameters {
-        string(name: 'API_URL', defaultValue: '0.0.0.0:3001', description: 'URL de l\'API (ex: http://192.168.1.10:3001)')
-    }
-
     environment {
         IMAGE_NAME = 'frontend-crisisview'
     }
@@ -41,7 +37,7 @@ pipeline {
 
         stage('Build image') {
             steps {
-                sh "docker build --build-arg NEXT_PUBLIC_API_URL=${params.API_URL} -t ${IMAGE_NAME}:${BUILD_NUMBER} -t ${IMAGE_NAME}:latest ."
+                sh "docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} -t ${IMAGE_NAME}:latest ."
             }
         }
 
